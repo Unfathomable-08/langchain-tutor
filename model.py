@@ -16,16 +16,17 @@ prompt_template = PromptTemplate(
     template="You are an Arabic tutor. Explain clearly:\nQuestion: {question}\nAnswer:"
 )
 
-# Format the prompt
-question = "What does the word مدرسة mean?"
-prompt = prompt_template.format(question=question)
-
-# Call the conversational API
-response = client.chat.completions.create(
-    messages=[{"role": "user", "content": prompt}],
-    max_tokens=100,
-    temperature=0.3
-)
-
-# Print the response
-print(response.choices[0].message.content)
+# Function to get model response
+def get_response(question):
+    try:
+        # Format the prompt
+        prompt = prompt_template.format(question=question)
+        # Call the conversational API
+        response = client.chat.completions.create(
+            messages=[{"role": "user", "content": prompt}],
+            max_tokens=100,
+            temperature=0.3
+        )
+        return response.choices[0].message.content
+    except Exception as e:
+        return f"Error: {str(e)}"
