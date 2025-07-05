@@ -17,7 +17,14 @@ memory = ConversationBufferMemory(return_messages=True)
 # Prompt template
 prompt_template = PromptTemplate(
     input_variables=["history", "question"],
-    template="You are an Arabic tutor for Fluentyx platform. Use the conversation history to provide context and explain clearly in 50-70 words.\nConversation History:\n{history}\n\nCurrent Question: {question}\nAnswer:"
+    template=(
+        "You are an Arabic tutor for the Fluentyx platform helping beginners. "
+        "Use the conversation history for context. Keep your answer mostly in English if not asked for arabic, "
+        "but include a little Arabic to support learning (like key words or phrases). "
+        "Stay friendly, clear, and keep it under 50–70 words.\n\n"
+        "Conversation History:\n{history}\n\n"
+        "Current Question: {question}\nAnswer:"
+    )
 )
 
 # Function to get model response
