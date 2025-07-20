@@ -27,6 +27,19 @@ prompt_template = PromptTemplate(
     )
 )
 
+# Prompt template for exercise evaluation
+exercise_prompt_template = PromptTemplate(
+    input_variables=["question", "user_answer"],
+    template=(
+        "You are an Arabic tutor evaluating a beginner's exercise response. "
+        "The exercise question is: {question}\n"
+        "The user's Arabic response is: {user_answer}\n"
+        "Score the response out of 10 based on relevance, grammar, and clarity. "
+        "Provide the score and one short sentence with feedback, suggestion, or praise in English, including one Arabic word or phrase to reinforce learning. "
+        "Format the response as: Score: X/10\nFeedback: [Your feedback]"
+    )
+)
+
 # Function to get model response
 def get_response(question):
     try:
@@ -45,5 +58,26 @@ def get_response(question):
         memory.save_context({"question": question}, {"answer": answer})
 
         return answer
+    except Exception as e:
+        return f"Error: {str(e)}"
+
+# Function to evaluate Arabic exercise responses
+def evaluate_exercise(question, user_answer):
+    try:
+        # Format the exercise prompt
+        prompt = exercise_prompt_template.format(question=question, user_answer=user_answer)
+        # Call the conversational API
+        response = client.chat.completions.create(
+            messages=[{"role": "user", "content": prompt}],
+            max_tokens=80,
+            temperature=0.2  # Lower temperature for more consistent scoring
+        )
+        result = response.choices[0].message.content
+        # Save to memory
+        memory.save_context(
+            {"question": f"Exercise: {question}, User Answer: {user_answer}"},
+            {"answer": result}
+        )
+        return result
     except Exception as e:
         return f"Error: {str(e)}"
